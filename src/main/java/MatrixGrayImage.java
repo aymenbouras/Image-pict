@@ -9,55 +9,68 @@ import java.util.Scanner;
  * Created by Arnaud Labourel on 02/10/2018.
  */
 public class MatrixGrayImage implements GrayImage {
-
-    private final GrayColor[][] pixels;
+    private GrayColor[][] pixels;
     private final int width;
     private final int height;
 
-
     @Override
-    public void setPixel(GrayColor gray, int x, int y) {
-        // TODO : Compléter la méthode pour modifier le pixel.
+    public int getMaximumGrayLevel(int x, int y) {
+        return pixels[x][y].getMaximumGrayLevel();
     }
 
     @Override
     public GrayColor getPixelGrayColor(int x, int y) {
-        // TODO : Changer les instructions pour retourner le bon pixel.
-        return new ByteGrayColor();
+        return pixels[x][y];
+    }
+
+    @Override
+    public void setGrayLevel(int graylevel, int x, int y) {
+        pixels[x][y].setGrayLevel(graylevel);
+    }
+
+    @Override
+    public int getGraylevel(int x, int y) {
+        return pixels[x][y].getGrayLevel();
     }
 
     @Override
     public Color getPixelColor(int x, int y) {
-        // TODO : Changer les instructions pour retourner la couleur du pixel.
-        return Color.WHITE;
+        return pixels[x][y].getColor();
     }
 
     @Override
     public int getWidth() {
-        // TODO : Changer les instructions pour retourner la largeur de l'image.
-        return 600;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        // TODO : Changer les instructions pour retourner la hauteur de l'image.
-        return 400;
+        return height;
     }
 
     public MatrixGrayImage(int width, int height){
-        /* TODO : Modifier les instructions pour initialiser correctement
-            les propriétés de l'instance.
-         */
-        this.width = 0;
-        this.height = 0;
-        this.pixels = null;
+        this.width = width;
+        this.height = height;
+        pixels = new ByteGrayColor[width][height];
+
+        for(int x = 0; x < this.width; x++) {
+            for (int y = 0; y < this.height; y++) {
+                pixels[x][y] = new ByteGrayColor();
+            }
+        }
     }
 
 
     public static MatrixGrayImage createImageFromPGMFile(String fileName) {
-        // NE PAS MODIFIER !
         InputStream file = ClassLoader.getSystemResourceAsStream(fileName);
-        Scanner scan = new Scanner(file);
+        Scanner scan = null;
+        try {
+            scan = new Scanner(file);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
         scan.nextLine();
         scan.nextLine();
 
@@ -70,8 +83,7 @@ public class MatrixGrayImage implements GrayImage {
 
         for(int y = 0; y < height; y++){
             for(int x = 0; x < width; x++) {
-                GrayColor color = new ByteGrayColor(scan.nextInt());
-                result.setPixel(color, x, y);
+                result.pixels[x][y] = new ByteGrayColor(scan.nextInt());
             }
         }
 
@@ -79,7 +91,7 @@ public class MatrixGrayImage implements GrayImage {
     }
 
     public void writeIntoPGMFormat(String fileName){
-        // NE PAS MODIFIER !
+
         try {
             FileWriter fileWriter = new FileWriter(fileName);
             PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -87,11 +99,11 @@ public class MatrixGrayImage implements GrayImage {
             printWriter.println("# CREATOR: TP3 Version 1.0");
             printWriter.printf("%d %d\n",this.width, this.height);
 
-            printWriter.println(pgmCodeOfGrayColor(pixels[0][0]));
+            printWriter.println(ByteGrayColor.MAXIMUM_GRAY_LEVEL);
 
             for(int y = 0; y < height; y++){
                 for(int x = 0; x < width; x++) {
-                    printWriter.println(pgmCodeOfGrayColor(getPixelGrayColor(x,y)));
+                    printWriter.println(getGraylevel(x,y));
                 }
             }
             printWriter.close();
@@ -99,11 +111,5 @@ public class MatrixGrayImage implements GrayImage {
         catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    private static final int PGM_MAXIMUM_CODE = 255;
-
-    private int pgmCodeOfGrayColor(GrayColor pixelGrayColor) {
-        return (int) (pixelGrayColor.getLuminosity() * (double) PGM_MAXIMUM_CODE);
     }
 }

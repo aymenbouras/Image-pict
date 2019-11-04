@@ -20,8 +20,8 @@ public class Display implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         this.image = MatrixGrayImage.createImageFromPGMFile("images/luminy.pgm");
+        invert
 
-        // TODO : Ajouter les transformations d'image.
 
         render();
     }

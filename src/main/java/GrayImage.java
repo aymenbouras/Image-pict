@@ -3,6 +3,8 @@
  */
 
 public interface GrayImage extends Image {
-    void setPixel(GrayColor gray, int x, int y);
+    void setGrayLevel(int graylevel, int x, int y);
+    int getGraylevel(int x, int y);
     GrayColor getPixelGrayColor(int x, int y);
+    int getMaximumGrayLevel(int x, int y);
 }
